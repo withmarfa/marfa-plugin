@@ -1,0 +1,7 @@
+.DS_Store
+
+# Claude Code local-only (do not commit)
+.claude/settings.local.json
+.claude/plans/
+.claude/scheduled_tasks.lock
+.claude/worktrees/
