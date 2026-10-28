@@ -1,0 +1,15 @@
+{
+  "name": "withmarfa",
+  "owner": {
+    "name": "WithMarfa",
+    "url": "https://marfa.so"
+  },
+  "description": "Plugins from WithMarfa for working with a Marfa instance.",
+  "plugins": [
+    {
+      "name": "marfa",
+      "source": "./",
+      "category": "Productivity"
+    }
+  ]
+}
