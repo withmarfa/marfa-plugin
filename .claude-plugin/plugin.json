@@ -1,0 +1,14 @@
+{
+  "name": "marfa",
+  "displayName": "Marfa",
+  "version": "0.0.1",
+  "description": "Connect your agent to your Marfa instance, find and save records in it without overwriting anything, and design types that fit.",
+  "author": {
+    "name": "WithMarfa",
+    "url": "https://marfa.so"
+  },
+  "homepage": "https://docs.marfa.so",
+  "repository": "https://github.com/withmarfa/marfa-plugin",
+  "license": "Apache-2.0",
+  "keywords": ["marfa", "mcp", "personal-data", "notes", "tasks"]
+}

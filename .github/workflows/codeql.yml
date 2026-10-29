@@ -1,0 +1,58 @@
+name: CodeQL
+
+# Analyzes the workflows, the only code CodeQL can read in this repository.
+#
+# A pull request or a push to `main` that changes only Markdown, such as the
+# skills, or agent instructions starts no run. CodeQL is not a required check,
+# so a run that never starts leaves no check pending. A draft pull request is
+# analyzed once it is marked ready for review, and on every push after that. A
+# weekly run analyzes the whole tree.
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**/*.md"
+      - LICENSE
+      - ".claude/**"
+      - ".codex/**"
+      - ".github/ISSUE_TEMPLATE/**"
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths-ignore:
+      - "**/*.md"
+      - LICENSE
+      - ".claude/**"
+      - ".codex/**"
+      - ".github/ISSUE_TEMPLATE/**"
+  schedule:
+    - cron: "41 4 * * 1"
+
+concurrency:
+  # A draft and a ready pull request have groups of their own, so a draft's
+  # run, queued a moment after the ready one, never cancels it. Other events
+  # get a group each, so a run on `main` is never cancelled by a later push.
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event_name == 'pull_request' && format('{0}-{1}', github.ref, github.event.pull_request.draft && 'draft' || 'ready') || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  actions:
+    name: Analyze (actions)
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: actions
+          build-mode: none
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: /language:actions

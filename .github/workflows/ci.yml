@@ -1,0 +1,118 @@
+name: CI
+
+on:
+  # A draft runs only the quick checks; marking it ready for review runs the
+  # rest, and so does every push after that. `Full CI` is the required check.
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
+
+# A draft and a ready pull request have groups of their own. A draft pushed and
+# marked ready a moment later starts two runs, and in one group the later
+# queued cancels the other, which can leave `Full CI` unreported. A push to
+# `main` gets a group of its own, so a later push never cancels its verdict.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event_name == 'pull_request' && format('{0}-{1}', github.ref, github.event.pull_request.draft && 'draft' || 'ready') || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  # The host versions the plugin is checked against. Raise them by hand when a
+  # new release changes how either host reads plugins.
+  CLAUDE_CODE_VERSION: 2.1.312
+  CODEX_VERSION: 0.164.0
+
+jobs:
+  lint:
+    name: Lint workflows and scripts
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      ACTIONLINT_VERSION: 1.7.12
+      ACTIONLINT_SHA256: 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      # actionlint checks each `run:` with the runner's shellcheck.
+      - name: Lint workflows and scripts
+        run: |
+          archive="${RUNNER_TEMP}/actionlint.tar.gz"
+          curl -fsSL -o "${archive}" \
+            "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          echo "${ACTIONLINT_SHA256}  ${archive}" | sha256sum -c -
+          tar -xzf "${archive}" -C "${RUNNER_TEMP}" actionlint
+          "${RUNNER_TEMP}/actionlint"
+          shellcheck scripts/*.sh
+
+      - name: Test the pull request description check
+        run: scripts/check-pr-description.test.sh
+
+  skills:
+    name: Check skills
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Test the skill check
+        run: scripts/check-skills.test.sh
+      - name: Check every skill's frontmatter
+        run: scripts/check-skills.sh
+
+  manifests:
+    name: Validate manifests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Install Claude Code
+        run: npm install --global "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
+      # Checks the plugin and marketplace manifests and the skills, and fails
+      # on warnings as well as errors.
+      - name: Validate the plugin and marketplace
+        run: claude plugin validate --strict .
+
+  install:
+    name: Install in Claude Code and Codex
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Install Claude Code and Codex
+        run: npm install --global "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}" "@openai/codex@${CODEX_VERSION}"
+      - name: Install the plugin in both hosts and list its skills
+        run: scripts/check-install.sh
+
+  # The one required check, since a skipped job passes a required check and a
+  # draft skips the install job. On a draft this job is `Draft CI`, so the
+  # required `Full CI` stays expected, and blocks a merge, until the run that
+  # marking it ready starts has finished every job. A skipped job keeps its
+  # name unevaluated, so it can never report as `Full CI`: a run that is
+  # cancelled skips this job, so a cancel can never leave `Full CI` green, and
+  # a failed job still runs it, and it fails.
+  gate:
+    name: ${{ github.event.pull_request.draft && 'Draft CI' || 'Full CI' }}
+    needs: [lint, skills, manifests, install]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          case " ${RESULTS} " in
+            *" failure "* | *" cancelled "*)
+              echo "::error::A job failed or was cancelled: ${RESULTS}"
+              exit 1
+              ;;
+          esac
