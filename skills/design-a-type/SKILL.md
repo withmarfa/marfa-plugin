@@ -11,7 +11,7 @@ Read these docs pages before you draft anything, and follow them where they disa
 
 ## 1. Look at what exists
 
-Call `marfa_overview` to see the types this instance holds, its own and those from connectors. Read the fields of any that come close. Ask the person for two or three real examples of what they want to keep, and design for those, not for an imagined general case.
+Call `marfa_overview` to see the types this instance holds, its own and those from connectors. For any that come close, call it again with `type` to read the fields. Ask the person for two or three real examples of what they want to keep, and design for those, not for an imagined general case.
 
 ## 2. Make the least change that fits
 
@@ -43,6 +43,6 @@ When an existing type is close but not exact, prefer it. Every new type is one m
 
 Show the person the definition as JSON, with a sentence on why you chose each field and why an existing type did not fit. Register it only after they agree.
 
-To register, use the tools at the instance's schema group (`<instance>/mcp/schema`) if the person has added them, or the Marfa command line: `marfa types scaffold` drafts a definition offline, and `marfa types register --file <file>` registers it. Registering needs the `metadata.types:write` permission and write access to the type.
+To register, use `marfa_save_type` with `action: register` at the instance's schema group (`<instance>/mcp/schema`), if the person has added it (the `connect` skill says how), or the Marfa command line: `marfa types scaffold` drafts a definition offline, and `marfa types register --file <file>` registers it. The tool takes `id`, `label`, `description`, `fields` and `parent` only. A definition with `display_hints` or `compatible_with` goes through the command line. Registering needs the `metadata.types:write` permission and write access to the type. The tool is offered only to a credential that can register types.
 
-Later changes follow "Change or delete a type": adding an optional field is easy, while removing a field or making one required needs more access and can affect items that already exist.
+Later changes follow "Change or delete a type": adding an optional field is easy, while removing a field or making one required needs more access and can affect items that already exist. With `marfa_save_type` and `action: change`, the fields you send are added or replaced, and a field set to `null` is removed, though items keep their values for it. Show the person the change before you send it. To move existing items to another type, use `marfa_move_items` from the same group: it previews, and starts only after the person agrees.
