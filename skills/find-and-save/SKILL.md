@@ -27,11 +27,11 @@ Call `marfa_overview` once at the start of the work. It shows which types the in
 
 ## Saving
 
-1. **Find before you create.** Search for an item that already holds this, such as the same URL, the same task or a note on the same subject. If one exists, show it and ask whether to add to it instead. If `marfa_create` answers `item_exists`, it wrote nothing and the answer names the existing item: show that item and do the same.
+1. **Find before you create.** Search for an item that already holds this, such as the same URL, the same task or a note on the same subject. If one exists, show it and ask whether to add to it instead.
 2. **Reuse the types the instance has.** Pick the closest existing type from the overview: a note for writing, a task for something to do, a bookmark for a link, an entity for a person or place. If nothing fits, use the `design-a-type` skill; do not invent a type in the middle of saving.
 3. **Keep provenance.** Fill the fields that say where something came from, such as `source_url`, `source_title` and `author`, when the type has them. When you make an item from other items, such as a summary of several notes, link it to each with a `derived-from` edge. When it mentions another item, use `references` or `about`. Never present something you wrote as the person's own words or as a quote.
 4. **Use the right place for each piece.** Properties hold what the item is, tags are the person's own labels, and edges connect items. Use tags the person already uses; do not invent a new set.
-5. **Retry safely.** To repeat a create whose answer you lost, send the same `id` both times: a random UUIDv7 that you choose. If the repeat answers `item_exists` for that `id`, the first call saved it.
+5. **Retry safely.** To repeat a create whose answer you lost, send the same `id` both times: a random UUIDv7 that you choose. A repeat answers `created: false` with the item as it stands and changes nothing, so the first call saved it. Never reuse an `id` for a different item.
 6. **Say what you saved.** Give the type, the title and where it appears, so the person can find it.
 
 To save a file, give `marfa_create` a public web address in `url`, or the file the person attached in a ChatGPT chat in `file`, and `attach_to` to link it to another item. The instance fetches the address itself, which is why the tool is marked as reaching the web. If the answer is `file_not_fetched` with reason `status`, the chat's link has probably expired: ask the person to attach the file again.
