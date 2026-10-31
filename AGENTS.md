@@ -25,6 +25,7 @@ The Marfa agent plugin: one plugin source that installs in Claude Code and Codex
 - Public prose (README, skills, issues, pull requests) follows the Google developer documentation style guide, in American English.
 - A skill speaks to the agent that reads it: short, imperative, and only what the agent would not do well without it.
 - Code comments follow the language's own conventions. A comment says only what the code cannot.
+- A change that a reader of Marfa's docs would notice, or a fault found in them, opens an issue on withmarfa/docs saying what changed or is wrong, why and for whom. It does not edit the docs.
 
 ## Working here
 
