@@ -52,7 +52,7 @@ To use Marfa in Claude or ChatGPT on the web, desktop or mobile, add `https://<y
 ## Learn more
 
 - [Marfa documentation](https://docs.marfa.so)
-- [Use Marfa with AI agents](https://docs.marfa.so/build/ai-agents)
+- [Connect your agent](https://docs.marfa.so/connect-your-agent)
 - [Documentation index for agents](https://docs.marfa.so/llms.txt)
 
 ## License

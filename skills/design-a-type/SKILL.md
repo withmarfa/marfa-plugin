@@ -7,7 +7,7 @@ description: Decide how a kind of record should live in a person's Marfa instanc
 
 Every Marfa item has a type, and the type says which properties the item holds. A good type is one that apps already understand, so the first answer is usually a type the instance already has. This skill is the judgement for choosing; the rules a type must meet are in the docs.
 
-Read these docs pages before you draft anything, and follow them where they disagree with this file: "Items and types", "Properties, metadata and edges", "Define a type", "Type rules" and "Types" (the core types and their fields). They are at https://docs.marfa.so, with an index at https://docs.marfa.so/llms.txt and a docs MCP server at https://docs.marfa.so/mcp.
+Read these docs pages before you draft anything, and follow them where they disagree with this file: "Items and types", "Properties and metadata", "Edges", "Define a type", "Type rules" and "Types" (the core types and their fields). They are at https://docs.marfa.so, with an index at https://docs.marfa.so/llms.txt and a docs MCP server at https://docs.marfa.so/mcp.
 
 ## 1. Look at what exists
 
