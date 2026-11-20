@@ -11,7 +11,7 @@ For facts about Marfa, read its docs rather than relying on this file: https://d
 
 ## Never handle a key in the chat
 
-Never ask the person to paste a Marfa API key or any other secret into the conversation, and never print one. If they paste a key anyway, do not repeat it or use it. Tell them that it is now in the chat history, and that they should revoke it and make a new one in their own terminal. Do not make a key with the admin tool `marfa_manage_key` either: its answer carries the new key's secret into the conversation.
+Never ask the person to paste a Marfa API key or any other secret into the conversation, and never print one. If they paste a key anyway, do not repeat it or use it. Tell them that it is now in the chat history, and that they should revoke it and make a new one in their own terminal. Do not make a key with the admin tool `marfa_manage_key` either: its answer carries the new key's secret into the conversation. The same holds for an instance's setup code and the owner's password: the person enters them only in the browser page.
 
 ## 1. Get the instance address
 
@@ -27,7 +27,11 @@ Request `<address>/.well-known/oauth-protected-resource/mcp`. If that is not fou
 ## 3. Choose how the agent signs in
 
 - **Sign in with OAuth (the default).** The person signs in to Marfa in their browser and approves the agent on a page that opens on Full access; they can choose narrower access there. Use this for anyone working with the agent themselves.
-- **A Marfa API key, for an agent that runs unattended,** such as a scheduled job. The person makes a key in their own terminal with only the permissions the job needs (the docs page "Use Marfa with AI agents" shows how), and sets it in an environment variable named `MARFA_API_KEY`, for example from their secret manager. The host reads the variable when it connects, so the key never enters the chat or a settings file.
+- **A Marfa API key, for an agent that runs unattended,** such as a scheduled job. The person makes a key in their own terminal with only the permissions the job needs (the docs page "Work from an agent" shows how), and sets it in an environment variable named `MARFA_API_KEY`, for example from their secret manager. The host reads the variable when it connects, so the key never enters the chat or a settings file.
+
+**To set up or run the instance,** connect `<address>/mcp/admin` (see the optional tool groups in step 4) and sign in there. A sign-in at `<address>/mcp` lists no owner tool.
+
+**A new instance that has no owner yet** is claimed in the same browser sign-in. The page first asks for the setup code, which the server prints where it runs: its terminal, or its host's deploy log, such as Railway's. Then the person chooses a name, a username and a password (the email is optional), and then approves the agent. Claiming from a computer other than the server's needs the instance's public address set first, with `MARFA_CLAIM_ADDRESS`; the Railway template sets it. For the details, or a setup code that no longer works, point the person to https://docs.marfa.so/run/run-on-a-server and https://docs.marfa.so/run/troubleshooting/start-and-claim rather than repeating them.
 
 ## 4. Add the server
 
@@ -59,10 +63,10 @@ For an unattended agent, use `codex mcp add marfa --url <address>/mcp --bearer-t
 
 These apps connect from the provider's servers, not from the person's device, so the instance needs a public HTTPS address (ChatGPT also offers a Secure MCP Tunnel for a private one). An instance reachable only on a home network or a private network works with an agent on a computer in that network, but not with these apps or with a phone away from it.
 
-**Optional tool groups.** Besides `<address>/mcp`, an instance serves two endpoints that each add tools. Add one only when the person asks for work that needs it, as a separate server with its own sign-in, such as `marfa-schema`. Each also serves the six tools of `/mcp`, so a host that has both lists them twice; if the person wants one connection, use the group endpoint alone.
+**Optional tool groups.** Besides `<address>/mcp`, an instance serves two endpoints that each add a group of tools. Add one only when the person asks for work that needs it, as a separate server with its own sign-in, such as `marfa-schema` or `marfa-admin`. Each also serves the eight tools of `/mcp`, so a host that has both lists them twice; if the person wants one connection, use the group endpoint alone.
 
-- `<address>/mcp/schema`: save a type (`marfa_save_type`, which the `design-a-type` skill uses), save a view, move every item of one type to another, save many items at once, and `marfa_search_docs`, which points to where the docs can be searched.
-- `<address>/mcp/admin`: instance health, the audit log, listing, making, narrowing and revoking keys (a revoke is previewed and needs the person's agreement), and webhooks.
+- `<address>/mcp/schema`: save a type (`marfa_save_type`, which the `design-a-type` skill uses), save a view, move every item of one type to another, save many items at once, read and set the names sources are shown by, and `marfa_search_docs`, which points to where the docs can be searched.
+- `<address>/mcp/admin`: the owner's tasks that the credential's permissions open, such as instance health and the audit log, keys and webhooks, settings, the trash and purging items for good, approved apps, backups, housekeeping jobs, connectors and deleting them, the stored copies of a file, and the owner's sign-ins. A task that cannot be undone, such as a purge or a key's revocation, answers with a preview first: show it to the person, and confirm only if they agree. Some owner tasks are never offered over MCP, such as restoring a backup or ending a sign-in; `mcp/tools-withheld` in the contract (https://github.com/withmarfa/marfa/blob/main/conformance/spec/mcp.md) lists them.
 
 A sign-in or key lists only the tools it can use, so the lists above can be shorter.
 
@@ -70,4 +74,4 @@ A sign-in or key lists only the tools it can use, so the lists above can be shor
 
 The host may need a reload before new tools appear: `/mcp` or a new session in Claude Code, a new session in Codex. Then call `marfa_overview` (it may be listed with a prefix, such as `mcp__marfa__marfa_overview`). Tell the person which instance you reached and summarize what the overview shows.
 
-If the tool is missing or the call fails, report the exact error. A key that reaches no type lists no tools at all, and one that can only read lists just `marfa_overview`, `marfa_find` and `marfa_get`. An HTTP `401` means the sign-in is missing or has ended: sign in again. A `403` with `insufficient_scope` means the app is signed in but lacks a permission the call needs; a host that supports it asks the person to approve more access, and the person decides. For a key, a refusal comes back as a tool error and the person must make a key with more access.
+If the tool is missing or the call fails, report the exact error. At `/mcp`, a key that reaches no type lists no tools at all, and one that can only read lists just `marfa_overview`, `marfa_find`, `marfa_get` and `marfa_read_rows`. An HTTP `401` means the sign-in is missing or has ended: sign in again. A `403` with `insufficient_scope` means the app is signed in but lacks a permission the call needs; a host that supports it asks the person to approve more access, and the person decides. For a key, a refusal comes back as a tool error and the person must make a key with more access.
