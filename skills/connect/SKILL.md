@@ -19,9 +19,9 @@ Ask for the address they open Marfa at, such as `https://marfa.example.com`. Rem
 
 ## 2. Check that the instance answers
 
-Request `<address>/.well-known/oauth-protected-resource/mcp`. If that is not found, request `<address>/health`, which every instance answers without a credential.
+Request `<address>/health`, which every instance answers without a credential.
 
-- **It answers:** go on.
+- **It answers:** read `claimed` in the answer. When it is `false`, the instance has no owner yet: tell the person that the browser sign-in will ask for the setup code, which the server shows where it runs, so they should have it ready (see the claiming paragraph in step 3). When it is `null`, the server cannot tell; say nothing about claiming. Then go on.
 - **It does not answer:** tell the person what you requested and what came back. Check the address with them; do not add a server that cannot be reached.
 
 ## 3. Choose how the agent signs in
@@ -75,3 +75,8 @@ A sign-in or key lists only the tools it can use, so the lists above can be shor
 The host may need a reload before new tools appear: `/mcp` or a new session in Claude Code, a new session in Codex. Then call `marfa_overview` (it may be listed with a prefix, such as `mcp__marfa__marfa_overview`). Tell the person which instance you reached and summarize what the overview shows.
 
 If the tool is missing or the call fails, report the exact error. At `/mcp`, a key that reaches no type lists no tools at all, and one that can only read lists just `marfa_overview`, `marfa_find`, `marfa_get` and `marfa_read_rows`. An HTTP `401` means the sign-in is missing or has ended: sign in again. A `403` with `insufficient_scope` means the app is signed in but lacks a permission the call needs; a host that supports it asks the person to approve more access, and the person decides. For a key, a refusal comes back as a tool error and the person must make a key with more access.
+
+Two refusals from `marfa_change_settings` at `/mcp/admin` need something other than a retry:
+
+- **`insufficient_user_authentication`:** the setting, such as `backup_path`, needs a recent sign-in. Ask the person to sign in to this connection again, not only reconnect, because a reconnect reuses the stored sign-in. In Claude Code, they select **Re-authenticate** on the server in `/mcp`, or run `claude mcp login marfa`; in Codex, they run `codex mcp login marfa`. Then try the change again. A key gets `app_sign_in_required` instead, because only an app's sign-in can make that change.
+- **`not_offered_over_mcp`:** `sign_in_address` is never changed over MCP, because moving it ends every sign-in, this connection's included. Give the owner the command from the error, `marfa config set sign_in_address <address>`, and do not retry.
