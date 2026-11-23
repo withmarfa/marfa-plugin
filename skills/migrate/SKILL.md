@@ -41,7 +41,8 @@ Rules that hold on every route:
 ## 3. Keys, settings and secrets
 
 - A script or a folder watch that runs on its own gets **a key of its own** that reaches only the types and edges that work needs. Never give it the person's full key. How to make a narrow key is [Manage keys for scripts and agents](https://docs.marfa.so/use/manage-keys). Never print a key, and never ask for one in the chat.
-- **A connector does not get a key you mint.** Its host mints the key. Do not put a key in the connector's environment, and do not invent a command that installs a connector host. Settings and secrets go through `marfa plugins settings` and `marfa plugins secret`. A secret's value is never an argument and is never printed.
+- **A connector does not get a key you mint.** It runs on a connector host, which mints its key, and it refuses a key made by hand. Do not put a key in the connector's environment. Settings and secrets go through `marfa plugins settings` and `marfa plugins secret`. A secret's value is never an argument and is never printed.
+- **If the person has no connector host to run it on,** say so plainly. Choose a one-time import or a synced folder for now, or wait. Do not invent a command that installs a host, and do not try to run the connector by hand.
 
 ## 4. Show the plan before the first sync
 
@@ -49,9 +50,9 @@ Before anything writes, show the person, in one short list:
 
 - each source, its route, and who owns the data afterwards
 - what is included, and what is deliberately left out
-- for a script or a folder watch, what its key can write; for a connector, that the host mints the key
+- for a script or a folder watch, what its key can write; for a connector, which host runs it
 - what will appear in Marfa (types, tier, and roughly how many items)
-- how to stop it
+- how to stop it and undo it: stop the job or pause the connector, revoke its key, and move its rows to the bin by their source
 
 Go on only when they agree.
 
@@ -66,4 +67,4 @@ Do not restate these pages, and do not invent an install command for a connector
 
 Installing a plugin, mapping, pause, sign-in and removing an app's data are how-tos on those pages. This skill only chooses the route and points there.
 
-After the first sync, show the person what arrived and ask before you change it. A removal, a pause and a second run are on the pages above.
+After the first run, show the person what arrived and ask before you change it. Check that a second run of an unchanged source writes nothing, from the run's report rather than its exit code. A removal, a pause and a second run are on the pages above.
