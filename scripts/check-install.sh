@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Installs the plugin from this checkout into throwaway Claude Code and Codex
-# homes, and checks that each host lists every skill in skills/ and that the
-# plugin carries nothing that runs: no hooks, agents, MCP or LSP servers.
+# homes, and checks that each host lists every skill in skills/ and the bundled
+# docs server marfa-docs, and that the plugin carries no hooks, agents or LSP
+# servers.
 #
 # Usage: scripts/check-install.sh [claude|codex]...  (both when none is named)
 # Set CLAUDE or CODEX to run a particular build of either command.
@@ -40,12 +41,14 @@ check_claude() {
   expected="$(printf '%s\n' "${skills[@]}" | sort | paste -sd, - | sed 's/,/, /g')"
   grep -Eq "Skills \(${#skills[@]}\)[[:space:]]+${expected}\$" <<< "${details}" \
     || fail "Claude Code does not list exactly the skills: ${expected}"
+  grep -Eq "MCP servers \(1\)[[:space:]]+marfa-docs[[:space:]]" <<< "${details}" \
+    || fail "Claude Code does not list exactly the marfa-docs server"
   local component
-  for component in "Agents" "Hooks" "MCP servers" "LSP servers"; do
+  for component in "Agents" "Hooks" "LSP servers"; do
     grep -Eq "^[[:space:]]*${component} \(0\)" <<< "${details}" \
       || fail "Claude Code lists ${component} in the plugin"
   done
-  [ "${failures}" -gt "${before}" ] || echo "Claude Code: installed marfa@withmarfa with skills ${expected}"
+  [ "${failures}" -gt "${before}" ] || echo "Claude Code: installed marfa@withmarfa with skills ${expected} and marfa-docs"
 }
 
 check_codex() {
@@ -62,7 +65,14 @@ check_codex() {
     grep -Eq "marfa:${skill}([^a-z0-9-]|\$)" <<< "${prompt}" \
       || fail "Codex does not list the skill marfa:${skill}"
   done
-  [ "${failures}" -gt "${before}" ] || echo "Codex: installed marfa@withmarfa with skills ${skills[*]/#/marfa:}"
+  local mcp servers
+  mcp="$(CODEX_HOME="${home}" "${codex_cmd}" mcp list)"
+  grep -Eq '^marfa-docs[[:space:]]+https://docs\.marfa\.so/mcp([[:space:]]|$)' <<< "${mcp}" \
+    || fail "Codex does not list marfa-docs at https://docs.marfa.so/mcp"
+  servers="$(awk 'NR > 1 && NF { print $1 }' <<< "${mcp}")"
+  [ "${servers}" = "marfa-docs" ] \
+    || fail "Codex does not list exactly the marfa-docs server: ${servers}"
+  [ "${failures}" -gt "${before}" ] || echo "Codex: installed marfa@withmarfa with skills ${skills[*]/#/marfa:} and marfa-docs"
 }
 
 hosts=("$@")

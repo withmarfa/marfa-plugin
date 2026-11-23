@@ -5,9 +5,9 @@ description: Connect this agent to a person's Marfa instance through its MCP ser
 
 # Connect Marfa
 
-Marfa is a personal data store, and each instance serves its own MCP server at `<instance>/mcp`. This skill adds that server to the host you are running in and checks that it answers. It adds nothing else.
+Marfa is a personal data store, and each instance serves its own MCP server at `<instance>/mcp`. This skill adds that server to the host you are running in and checks that it answers.
 
-For facts about Marfa, read its docs rather than relying on this file: https://docs.marfa.so, the index at https://docs.marfa.so/llms.txt, or the docs MCP server at https://docs.marfa.so/mcp. When they disagree with this file, follow the docs.
+The plugin already bundles the public docs server as `marfa-docs`, at `https://docs.marfa.so/mcp`. It needs no sign-in and it reaches no one's data. Use it for what Marfa can and cannot do. Claude Code shows a plugin server as `plugin:<plugin>:<server>`, so this one is `plugin:marfa:marfa-docs`. Codex lists it as `marfa-docs`. When the docs disagree with this file, follow the docs. The index is at https://docs.marfa.so/llms.txt.
 
 ## Never handle a key in the chat
 
@@ -66,7 +66,7 @@ These apps connect from the provider's servers, not from the person's device, so
 **Optional tool groups.** Besides `<address>/mcp`, an instance serves two endpoints that each add a group of tools. Add one only when the person asks for work that needs it, as a separate server with its own sign-in, such as `marfa-schema` or `marfa-admin`. Each also serves the eight tools of `/mcp`, so a host that has both lists them twice; if the person wants one connection, use the group endpoint alone.
 
 - `<address>/mcp/schema`: save a type (`marfa_save_type`, which the `design-a-type` skill uses), save a view, move every item of one type to another, save many items at once, read and set the names sources are shown by, and `marfa_search_docs`, which points to where the docs can be searched.
-- `<address>/mcp/admin`: the owner's tasks that the credential's permissions open, such as instance health and the audit log, keys and webhooks, settings, the trash and purging items for good, approved apps, backups, housekeeping jobs, connectors and deleting them, the stored copies of a file, and the owner's sign-ins. A task that cannot be undone, such as a purge or a key's revocation, answers with a preview first: show it to the person, and confirm only if they agree. Some owner tasks are never offered over MCP, such as restoring a backup or ending a sign-in; `mcp/tools-withheld` in the contract (https://github.com/withmarfa/marfa/blob/main/conformance/spec/mcp.md) lists them.
+- `<address>/mcp/admin`: the owner's tasks that the credential's permissions open. A task that cannot be undone, such as a purge or a key's revocation, answers with a preview first: show it to the person, and confirm only if they agree. Ending a sign-in is offered as `marfa_end_sign_in`, including with `remove_data`. Read what that tool does on [MCP admin tools](https://docs.marfa.so/reference/mcp-admin-tools). Some owner tasks are never offered over MCP, such as restoring a backup; that page says which.
 
 A sign-in or key lists only the tools it can use, so the lists above can be shorter.
 
