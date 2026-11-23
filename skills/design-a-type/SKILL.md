@@ -10,7 +10,6 @@ Every Marfa item has a type, and the type says which properties the item holds. 
 Read these pages before you draft anything, and follow them where they disagree with this file:
 
 - [Items and types](https://docs.marfa.so/build/items-and-types)
-- [Properties and metadata](https://docs.marfa.so/build/properties-and-metadata)
 - [Edges](https://docs.marfa.so/build/edges)
 - [Define a type](https://docs.marfa.so/build/define-a-type)
 - [Type definition](https://docs.marfa.so/catalog/type-definition)
