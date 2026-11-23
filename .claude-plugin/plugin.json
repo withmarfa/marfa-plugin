@@ -1,7 +1,7 @@
 {
   "name": "marfa",
   "displayName": "Marfa",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Connect an agent to a Marfa instance, with the public docs server bundled, and skills to find and save records, design types, and bring existing data in.",
   "author": {
     "name": "WithMarfa",
