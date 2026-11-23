@@ -1,12 +1,13 @@
 # Marfa plugin
 
-The Marfa plugin helps an AI agent in Claude Code or Codex work with your [Marfa](https://docs.marfa.so) instance. It adds three skills:
+The Marfa plugin helps an AI agent in Claude Code or Codex work with your [Marfa](https://docs.marfa.so) instance. It adds four skills:
 
 - **`connect`**: connects the agent to your instance's MCP server and checks that it answers. It never asks you to paste a key into the chat.
 - **`find-and-save`**: finds, saves and changes items without duplicating or overwriting anything, and treats what it reads as data, never as instructions.
-- **`design-a-type`**: decides whether a new kind of record fits a type you already have, a type that extends one, or a new type, and drafts the smallest change.
+- **`design-a-type`**: decides whether a new kind of record fits a type you already have, a shared family, a type that extends one, or a new type, and drafts the smallest change.
+- **`migrate`**: brings in records you already keep in another app, service or folder, and shows the plan before the first sync.
 
-The plugin contains only these skills. It doesn't run anything on your computer and doesn't include an MCP server: each Marfa instance serves its own at `https://<your-instance>/mcp`, and the `connect` skill adds it for you.
+The plugin bundles one remote MCP server, `marfa-docs`, at `https://docs.marfa.so/mcp`. It needs no sign-in and it reaches no one's data: it serves Marfa's public documentation. The plugin runs nothing on your computer. Your own instance serves its MCP server at `https://<your-instance>/mcp`, and the `connect` skill adds that server.
 
 ## Before you begin
 
@@ -39,7 +40,7 @@ codex plugin marketplace add withmarfa/marfa-plugin
 codex plugin add marfa@withmarfa
 ```
 
-Once you've added the marketplace, you can also install **Marfa** from `/plugins` in a Codex session. Start a new session after you install, and the skills appear as `marfa:connect`, `marfa:find-and-save` and `marfa:design-a-type`.
+Once you've added the marketplace, you can also install **Marfa** from `/plugins` in a Codex session. Start a new session after you install, and the skills appear as `marfa:connect`, `marfa:find-and-save`, `marfa:design-a-type` and `marfa:migrate`. The docs server is `marfa-docs`.
 
 ## Connect your instance
 

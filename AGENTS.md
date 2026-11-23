@@ -1,13 +1,13 @@
 # marfa-plugin
 
-The Marfa agent plugin: one plugin source that installs in Claude Code and Codex and carries three skills, `connect`, `find-and-save` and `design-a-type`. It ships nothing that runs: no MCP server entry, hooks, agents or commands. Each Marfa instance serves its own MCP server, and the `connect` skill adds it to the host.
+The Marfa agent plugin: one plugin source that installs in Claude Code and Codex and carries four skills, `connect`, `find-and-save`, `design-a-type` and `migrate`. It ships one remote MCP server entry, `marfa-docs` (`https://docs.marfa.so/mcp`), which needs no sign-in and reaches no one's data. It ships no hooks, agents or commands. Each Marfa instance serves its own MCP server, and the `connect` skill adds it to the host.
 
 ## Layout
 
 - `.claude-plugin/plugin.json` is the plugin manifest and `.claude-plugin/marketplace.json` the marketplace `withmarfa`, whose one entry is this repository (`source: "./"`). Claude Code reads both. Codex reads the same files as its legacy-compatible layout.
 - `skills/<name>/SKILL.md` holds each skill, in the Agent Skills format both hosts read. A skill's frontmatter uses only `name`, `description`, `license`, `compatibility`, `metadata` and `allowed-tools`; `name` matches the directory, because Claude Code names a plugin skill by its directory and Codex by its `name`.
 - A skill adds judgement, not facts. Facts about Marfa live in its docs (https://docs.marfa.so) and its contract (`conformance/spec/` in withmarfa/marfa), and a skill points there. Check every Marfa name, tool, field and rule a skill states against both before it merges.
-- `scripts/check-skills.sh` checks each skill's frontmatter; `scripts/check-skills.test.sh` pins its rules. `scripts/check-install.sh` installs the plugin from the checkout into throwaway Claude Code and Codex homes and checks that each host lists every skill and nothing that runs. Run all three before a pull request.
+- `scripts/check-skills.sh` checks each skill's frontmatter; `scripts/check-skills.test.sh` pins its rules. `scripts/check-install.sh` installs the plugin from the checkout into throwaway Claude Code and Codex homes and checks that each host lists every skill and the `marfa-docs` server, and no hooks, agents or LSP servers. Run all three before a pull request.
 
 ## CI
 
