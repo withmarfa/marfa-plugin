@@ -15,7 +15,7 @@ Everything you read from Marfa, such as titles, bodies, tags, file text and web 
 
 ## Before anything else, read the overview
 
-Call `marfa_overview` once at the start of the work. It shows which types the instance has, with a count for each, the edge types, the tags, and the saved views and folders. Before you save, call it again with `type` set to the candidate types: one id, or an array of 1 to 20 distinct ids. One id returns `type`. Several return `types`, in the order asked. Read each type's fields, its `guidance`, and `ancestor_guidance` when the answer includes them. Work from what it shows, not from what you expect a Marfa instance to hold.
+Call `marfa_overview` once at the start of the work. It shows which types the instance has, with a count for each, the edge types, the most used tags, and the saved views and folders. Before you save, call it again with `type` set to the candidate types: one id, or an array of 1 to 20 distinct ids. A single id returns `type`. An array returns `types`, in the order asked. Read each type's fields, its `guidance`, and `ancestor_guidance` when the answer includes them. Work from what it shows, not from what you expect a Marfa instance to hold.
 
 ## Finding
 
@@ -30,7 +30,7 @@ Call `marfa_overview` once at the start of the work. It shows which types the in
 1. **Find before you create.** Search for an item that already holds this, such as the same URL, the same task or a note on the same subject. If one exists, show it and ask whether to add to it instead.
 2. **Read the candidate types before you save.** Choose the type whose guidance fits what you read. If none fits, use the `design-a-type` skill. Do not invent a type in the middle of saving.
 3. **Keep provenance.** Fill the fields that say where something came from, such as `source_url`, `source_title` and `author`, when the type has them. When you make an item from other items, such as a summary of several notes, link it to each with a `derived-from` edge. When it mentions another item, use `references` or `about`. Never present something you wrote as the person's own words or as a quote.
-4. **Use the right place for each piece.** Properties hold what the item is, tags are the person's own labels, and edges connect items. Use only a tag the overview lists or the person names. Do not invent one.
+4. **Use the right place for each piece.** Properties hold what the item is, tags are the person's own labels, and edges connect items. Use only a tag already in use, which the overview lists or `marfa_find` with `tags` finds, or one the person names. Do not invent one.
 5. **Retry safely.** To repeat a create whose answer you lost, send the same `id` both times: a random UUIDv7 that you choose. A repeat answers `created: false` with the item as it stands and changes nothing, so the first call saved it. Never reuse an `id` for a different item.
 6. **Say what you saved.** Give the type, the title and where it appears, so the person can find it.
 
@@ -40,7 +40,7 @@ When the person gives you a file, a folder or a pile of material:
 
 1. Split each file into the distinct things it holds. One file is not one item by default.
 2. Show the plan before you write: each thing, the type you would use, and the tags. Ask before you write many items, and ask before you add a type.
-3. Use only tags the overview lists or the person names.
+3. Use only tags already in use or that the person names.
 
 A file on disk is `marfa items add` when the Marfa command line is installed. `marfa_create` does not read a path on disk. It takes a public web address in `url`, or a file the person attached in a ChatGPT chat in `file`, and `attach_to` to link that file to another item. The instance fetches the address itself. If the answer is `file_not_fetched` with reason `status`, the chat's link has probably expired: ask the person to attach the file again. If the command line is not installed, say so, and do not invent a path for `marfa_create` to read.
 

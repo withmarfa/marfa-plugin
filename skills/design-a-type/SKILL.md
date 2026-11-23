@@ -20,7 +20,7 @@ The docs server bundled with this plugin is `marfa-docs`. The `connect` skill sa
 
 ## 1. Look at what exists
 
-Call `marfa_overview` to see the types this instance holds. For any that come close, call it again with `type` set to those ids, one id or an array of 1 to 20 distinct ids. One id returns `type`. Several return `types`, in the order asked. Read their fields, `guidance` and `ancestor_guidance`. Ask the person for two or three real examples of what they want to keep, and design for those, not for an imagined general case.
+Call `marfa_overview` to see the types this instance holds. For any that come close, call it again with `type` set to those ids, one id or an array of 1 to 20 distinct ids. A single id returns `type`. An array returns `types`, in the order asked. Read their fields, `guidance` and `ancestor_guidance`. Ask the person for two or three real examples of what they want to keep, and design for those, not for an imagined general case.
 
 ## 2. Make the least change that fits
 
